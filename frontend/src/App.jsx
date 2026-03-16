@@ -5,6 +5,7 @@ import Auth from "./pages/Auth.jsx";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUserData } from "./redux/userslice";
+import InterviewPage from "./pages/InterviewPage.jsx"
 
 export const serverUrl = "http://localhost:3000";
 
@@ -25,7 +26,9 @@ const App = () => {
     <div>
       <Routes>
         <Route path="/" element={<Home/>} />
-        <Route path="auth" element={<Auth />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/interview" element={<InterviewPage />} />
+        
       </Routes>
     </div>
   );

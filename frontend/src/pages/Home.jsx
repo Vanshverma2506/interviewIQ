@@ -12,6 +12,7 @@ import pdfImg from "../assets/pdf.png";
 import techImg from "../assets/tech.png";
 import creditImg from "../assets/credit.png";
 
+
 import {
   BsRobot,
   BsMic,
@@ -23,6 +24,7 @@ import { HiSparkles } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
 import AuthModel from "../components/authModel.jsx";
 import Footer from "../components/Footer.jsx";
+
 
 const Home = () => {
   const navigate = useNavigate();
@@ -286,6 +288,7 @@ const Home = () => {
       </div>
 
       {showAuth && <AuthModel onClose={() => setShowAuth(false)} />}
+        
         <Footer/>
     </div>
   );
