@@ -36,7 +36,7 @@ const Step2Interview = ({ interviewData, onFinish }) => {
             <div className="grid grid-cols-2 gap-6 text-center">
               <div>
                 <span className="">1</span>
-                <span></span>
+                <span>2</span>
               </div>
               <div>
                  <span></span>
