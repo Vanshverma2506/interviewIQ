@@ -9,8 +9,13 @@ import {
 } from "react-icons/fa";
 import axios from "axios";
 import { serverUrl } from "../App";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserData } from "../redux/userslice";
 
 const Step1Setup = ({ onStart }) => {
+
+  const {userData} = useSelector((state)=>state.user)
+  const dispatch=useDispatch()
   const [role, setRole] = useState("");
   const [experience, setExperience] = useState("");
   const [mode, setMode] = useState("Technical");
@@ -45,6 +50,26 @@ const Step1Setup = ({ onStart }) => {
 
       setAnalyzing(false);
     }
+  };
+  const handleStart = async () => {
+    setLoading(true);
+    try {
+      const result = await axios.post(
+        serverUrl + "/api/interview/generate-questions",
+        { role, experience, mode, resumeText, projects, skills },{withCredentials:true}
+        
+      );
+      console.log(result.data)
+      if(userData){
+        dispatch(setUserData({...userData,credits:result.data.creditsLeft}))
+      }
+      setLoading(false)
+      onStart(result.data)
+    } 
+    catch (error) {
+  console.log(error);
+  setLoading(false);
+}
   };
   return (
     <motion.div
@@ -132,7 +157,7 @@ const Step1Setup = ({ onStart }) => {
               className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition "
             >
               <option value="Technical">Technical Interview</option>
-              <option vlaue="HR">HR Interview</option>
+              <option value="HR">HR Interview</option>
             </select>
             {!analysisDone && (
               <motion.div
@@ -174,31 +199,46 @@ const Step1Setup = ({ onStart }) => {
                 className="bg-gray-50 border border-gray-200 rounded-xl p-5 space-y-4"
               >
                 <h3 className="font-semibold text-gray-800 text-lg">
-                  Resume Analysis Result</h3>
-                  {projects.length > 0 && (<div> <p className="mb-1 font-medium text-gray-700">Projects:</p>
-                  <ul className="list-disc list-inside text-gray-600 space-y-1">{
-                    projects.map((p,i)=>(<li key={i}>
-                      {p}
-                    </li>))}</ul>
-                  </div>)}
-                  
-                   {skills.length > 0 && (<div> <p className="mb-1 font-medium text-gray-700">Skills:</p>
-                  <div className="flex flex-wrap gap-2">{
-                    skills.map((s,i)=>(<span key={i} className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-                      {s}
-                    </span>))}</div>
-                  </div>)}
+                  Resume Analysis Result
+                </h3>
+                {projects.length > 0 && (
+                  <div>
+                    {" "}
+                    <p className="mb-1 font-medium text-gray-700">Projects:</p>
+                    <ul className="list-disc list-inside text-gray-600 space-y-1">
+                      {projects.map((p, i) => (
+                        <li key={i}>{p}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
 
-                
+                {skills.length > 0 && (
+                  <div>
+                    {" "}
+                    <p className="mb-1 font-medium text-gray-700">Skills:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {skills.map((s, i) => (
+                        <span
+                          key={i}
+                          className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </motion.div>
             )}
             <motion.button
-              disabled={!role || !experience}
+            onClick={handleStart}
+              disabled={!role || !experience|| loading}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.95 }}
               className="w-full disabled:bg-gray-600 bg-green-600 hover:bg-green-700 text-white py-3 rounded-full text-lg font-semibold transition duration-300 shadow-md cursor-pointer"
             >
-              Start interview
+             {loading?"starting..." : "Start interview"}
             </motion.button>
           </div>
         </motion.div>

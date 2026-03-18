@@ -10,7 +10,7 @@ const InterviewPage = () => {
     <div className="m-h-screen bg-gray-50">
       {step === 1 && (
         <Step1Setup
-          onstart={(data) => {
+          onStart={(data) => {
             setInterViewData(data);
             setStep(2);
           }}
