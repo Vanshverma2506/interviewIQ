@@ -238,7 +238,7 @@ const Step1Setup = ({ onStart }) => {
               whileTap={{ scale: 0.95 }}
               className="w-full disabled:bg-gray-600 bg-green-600 hover:bg-green-700 text-white py-3 rounded-full text-lg font-semibold transition duration-300 shadow-md cursor-pointer"
             >
-             {loading?"starting..." : "Start interview"}
+             {loading?"Starting..." : "Start interview"}
             </motion.button>
           </div>
         </motion.div>
@@ -248,3 +248,5 @@ const Step1Setup = ({ onStart }) => {
 };
 
 export default Step1Setup;
+
+
