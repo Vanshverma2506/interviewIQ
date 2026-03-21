@@ -4,13 +4,12 @@ import femaleVideo from "../assets/videos/female-ai.mp4";
 import Timer from "./Timer";
 import { motion } from "motion/react";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
-import { use } from "react";
 import axios from "axios";
 import { serverUrl } from "../App";
-import { BsArrowLeft } from "react-icons/bs";
+import { BsArrowRight } from "react-icons/bs";
 
 const Step2Interview = ({ interviewData, onFinish }) => {
-  const { _id: interview_id, questions, userName } = interviewData;
+  const { interview_id, questions, userName } = interviewData;
   const [isIntroPhase, setIsIntroPhase] = useState(true);
   const [isMicOn, setIsMicOn] = useState(true);
   const recognitionref = useRef(null);
@@ -19,7 +18,7 @@ const Step2Interview = ({ interviewData, onFinish }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answer, setAnswer] = useState("");
   const [feedback, setFeedback] = useState("");
-  const [timeLeft, setTimeLeft] = useState(questions[0]?.timeLimit || 60);
+  const [timeLeft, setTimeLeft] = useState(60);
 
   const [selectedVoice, setSelectedVoice] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,7 +30,7 @@ const Step2Interview = ({ interviewData, onFinish }) => {
   const videoRef = useRef(null);
   const hasSpokenRef = useRef(false);
 
-  const currentQuestion = questions[currentIndex];
+  const currentQuestion = questions?.[currentIndex];
 
   useEffect(() => {
     const loadVoices = () => {
@@ -94,25 +93,18 @@ const Step2Interview = ({ interviewData, onFinish }) => {
         stopMic();
         setIsApiPlaying(true);
         videoRef.current?.play();
-
-        if (isQuestion) {
-          setShowTextQuestion(true);
-        }
+        if (isQuestion) setShowTextQuestion(true);
       };
 
       utterance.onend = () => {
-        videoRef.current?.pause();
-        videoRef.current.currentTime = 0;
+        if (videoRef.current) {
+          videoRef.current.pause();
+          videoRef.current.currentTime = 0;
+        }
         setIsApiPlaying(false);
-        if (isMicOn) {
-          startMic();
-        }
-
-        if (!isQuestion) {
-          setShowTextQuestion(false);
-        } else {
-          setSubTitle("");
-        }
+        if (isMicOn) startMic();
+        if (!isQuestion) setShowTextQuestion(false);
+        else setSubTitle("");
         resolve();
       };
 
@@ -143,14 +135,11 @@ const Step2Interview = ({ interviewData, onFinish }) => {
 
         await new Promise((r) => setTimeout(r, 300));
 
-        if (currentIndex === questions.length - 1) {
+        if (currentIndex === (questions?.length || 0) - 1) {
           await speakText("Alright, this one might be a bit more challenging.");
         }
 
         await speakText(currentQuestion.question, true);
-        if (isMicOn) {
-          startMic();
-        }
       }
     };
 
@@ -161,11 +150,6 @@ const Step2Interview = ({ interviewData, onFinish }) => {
     if (!currentQuestion) return;
     setTimeLeft(currentQuestion.timeLimit || 60);
   }, [currentIndex]);
-
-useEffect(() => {
-  if (!currentQuestion) return;
-  setTimeLeft(currentQuestion.timeLimit || 60);
-}, [currentIndex]);
 
   useEffect(() => {
     if (isIntroPhase) return;
@@ -193,40 +177,44 @@ useEffect(() => {
     recognition.interimResults = false;
 
     recognition.onresult = (event) => {
-      const transcript = event.results[event.results.length - 1][0].transcript;
-      setAnswer((prev) => prev + "" + transcript);
+      const transcript =
+        event.results[event.results.length - 1][0].transcript;
+      setAnswer((prev) => prev + " " + transcript);
     };
+
+    recognition.onend = () => {
+      if (isMicOn && !isApiPlaying) {
+        recognition.start();
+      }
+    };
+
     recognitionref.current = recognition;
-  }, []);
+  }, [isMicOn, isApiPlaying]);
 
   const startMic = () => {
     if (recognitionref.current && !isApiPlaying) {
       try {
+        recognitionref.current.stop();
         recognitionref.current.start();
       } catch (error) {}
     }
   };
+
   const stopMic = () => {
     if (recognitionref.current) {
       recognitionref.current.stop();
     }
   };
+
   const toggleMic = () => {
-    if (isMicOn) {
-      stopMic();
-    } else {
-      startMic();
-    }
+    if (isMicOn) stopMic();
+    else startMic();
     setIsMicOn(!isMicOn);
   };
 
   const submitAnswer = async () => {
-    if (isSubmitting) return;
-    if (!answer.trim()) {
-      // ✅ add this
-      alert("Enter answer first");
-      return;
-    }
+    if (isSubmitting || !currentQuestion) return;
+
     stopMic();
     setIsSubmitting(true);
     try {
@@ -240,36 +228,37 @@ useEffect(() => {
         },
         { withCredentials: true },
       );
-      console.log("API RESPONSE:", result.data);
-      const fb = result.data?.feedback || "done";
 
+      const fb = result.data?.feedback || "done";
       setFeedback(fb);
       speakText(fb);
 
       setIsSubmitting(false);
-    }catch (error) {
-  console.log("ERROR:", error.response?.data || error.message);
-  setIsSubmitting(false);
-}
+    } catch (error) {
+      console.log(error.response?.data || error.message);
+      setIsSubmitting(false);
+    }
   };
- const handelNext = async () => {
-  setAnswer("");
-  setFeedback("");
 
-  if (currentIndex + 1 >= questions.length) {
-    finishInterview();
-    return;
-  }
+  const handelNext = async () => {
+    setAnswer("");
+    setFeedback("");
 
-  await speakText("Alright , let's move to the next question.");
+    if (currentIndex + 1 >= (questions?.length || 0)) {
+      finishInterview();
+      return;
+    }
 
-  setCurrentIndex((prev) => prev + 1); // ✅ fix stale state
-  hasSpokenRef.current = false; // ✅ AI next question bolega
+    await speakText("Alright , let's move to the next question.");
 
-  setTimeout(() => {
-    if (isMicOn) startMic();
-  }, 500);
-};
+    setCurrentIndex((prev) => prev + 1);
+    hasSpokenRef.current = false;
+
+    setTimeout(() => {
+      if (isMicOn) startMic();
+    }, 500);
+  };
+
   const finishInterview = async () => {
     stopMic();
     setIsMicOn(false);
@@ -285,6 +274,7 @@ useEffect(() => {
       console.log(error);
     }
   };
+
   return (
     <div className="min-h-screen bg-linear-to-br from-emerald-50 via-white to-teal-100 flex items-center justify-center p-4 sm:p-6">
       <div className="w-full max-w-350 min-h-[80vh] bg-white rounded-3xl shadow-2xl border border-gray-200 flex flex-col lg:flex-row overflow-hidden">
@@ -340,7 +330,7 @@ useEffect(() => {
 
               <div>
                 <span className="text-2xl font-bold text-emerald-600">
-                  {questions.length}
+                  {questions?.length || 0}
                 </span>
                 <span className="text-xs text-gray-400">Total Questions</span>
               </div>
@@ -356,7 +346,7 @@ useEffect(() => {
           {!isIntroPhase && showTextQuestion && (
             <div className="relative mb-6 bg-gray-50 p-4 sm:p-6 rounded-2xl border border-gray-200 shadow-sm">
               <p className="text-xs sm:text-sm text-gray-400 mb-2">
-                Question {currentIndex + 1} of {questions.length}
+                Question {currentIndex + 1} of {questions?.length || 0}
               </p>
 
               <div className="text-base sm:text-lg font-semibold text-gray-800 leading-relaxed pr-16">
@@ -407,7 +397,7 @@ useEffect(() => {
                 className="w-full bg-linear-to-r from-emerald-600 to-teal-500 text-white py-3 rounded-xl shadow-md hover:opacity-90 transition flex items-center justify-center gap-1"
               >
                 Next Question
-                <BsArrowLeft size={18} />
+                <BsArrowRight size={18} />
               </button>
             </motion.div>
           )}

@@ -37,8 +37,8 @@ const Step1Setup = ({ onStart }) => {
       { withCredentials: true },
     );
     console.log(result.data);
-    setRole(result.data.role || "");
-    setExperience(result.data.experience || "");
+    setRole(result.data.role || role);
+    setExperience(result.data.experience || experience);
     setProjects(result.data.projects || []);
     setSkills(result.data.skills || []);
     setResumeText(result.data.resumeText || "");

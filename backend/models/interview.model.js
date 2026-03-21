@@ -23,13 +23,13 @@ const interviewSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    expreince: {
+    experience: {
       type: String,
-      reuqired: true,
+      required: true,
     },
     mode: {
       type: String,
-     enum: ["HR","Technical"],
+      enum: ["HR", "Technical"],
       reuqired: true,
     },
     resumeText: {
