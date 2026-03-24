@@ -13,9 +13,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUserData } from "../redux/userslice";
 
 const Step1Setup = ({ onStart }) => {
-
-  const {userData} = useSelector((state)=>state.user)
-  const dispatch=useDispatch()
+  const { userData } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const [role, setRole] = useState("");
   const [experience, setExperience] = useState("");
   const [mode, setMode] = useState("Technical");
@@ -38,7 +37,13 @@ const Step1Setup = ({ onStart }) => {
     );
     console.log(result.data);
     setRole(result.data.role || role);
-    setExperience(result.data.experience || experience);
+    setExperience(
+  result.data.experience
+    ? result.data.experience
+        .substring(0, 40)
+        .replace(/[.,]$/, "")  
+    : experience
+);
     setProjects(result.data.projects || []);
     setSkills(result.data.skills || []);
     setResumeText(result.data.resumeText || "");
@@ -56,20 +61,21 @@ const Step1Setup = ({ onStart }) => {
     try {
       const result = await axios.post(
         serverUrl + "/api/interview/generate-questions",
-        { role, experience, mode, resumeText, projects, skills },{withCredentials:true}
-        
+        { role, experience, mode, resumeText, projects, skills },
+        { withCredentials: true },
       );
-      console.log(result.data)
-      if(userData){
-        dispatch(setUserData({...userData,credits:result.data.creditsLeft}))
+      console.log(result.data);
+      if (userData) {
+        dispatch(
+          setUserData({ ...userData, credits: result.data.creditsLeft }),
+        );
       }
-      setLoading(false)
-      onStart(result.data)
-    } 
-    catch (error) {
-  console.log(error);
-  setLoading(false);
-}
+      setLoading(false);
+      onStart(result.data);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
   return (
     <motion.div
@@ -90,7 +96,7 @@ const Step1Setup = ({ onStart }) => {
           </h2>
           <p className="text-gray-600 mb-10">
             Practice real Interview scenarios powered by AI. Improve
-            communication skills , technical skills and confidence
+            communication skills, technical skills, and confidence
           </p>
           <div className="space-y-5">
             {[
@@ -176,7 +182,7 @@ const Step1Setup = ({ onStart }) => {
                 <p className="text-gray-600 font-medium">
                   {resumeFile
                     ? resumeFile.name
-                    : "Click to upload resume (Optional)"}
+                    : "Click to upload Resume (Optional)"}
                 </p>
                 {resumeFile && (
                   <motion.button
@@ -185,7 +191,7 @@ const Step1Setup = ({ onStart }) => {
                       handleUploadResume();
                     }}
                     whileHover={{ scale: 1.02 }}
-                    className="mt-4 bg-gray-900 text-white px-5 py-2 rounded-lg hover:bg-gray-800 transition"
+                    className="mt-4 bg-gray-900 cursor-pointer text-white px-5 py-2 rounded-lg hover:bg-gray-800 transition"
                   >
                     {analyzing ? "Analyzing.." : "Analyze Resume"}
                   </motion.button>
@@ -232,13 +238,13 @@ const Step1Setup = ({ onStart }) => {
               </motion.div>
             )}
             <motion.button
-            onClick={handleStart}
-              disabled={!role || !experience|| loading}
+              onClick={handleStart}
+              disabled={!role || !experience || loading}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.95 }}
               className="w-full disabled:bg-gray-600 bg-green-600 hover:bg-green-700 text-white py-3 rounded-full text-lg font-semibold transition duration-300 shadow-md cursor-pointer"
             >
-             {loading?"Starting..." : "Start interview"}
+              {loading ? "Starting..." : "Start Interview"}
             </motion.button>
           </div>
         </motion.div>
@@ -248,5 +254,3 @@ const Step1Setup = ({ onStart }) => {
 };
 
 export default Step1Setup;
-
-

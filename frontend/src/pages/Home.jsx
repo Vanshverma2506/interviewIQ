@@ -40,7 +40,7 @@ const Home = () => {
           <div className="flex justify-center mb-6">
             <div className="bg-gray-100 text-gray-600 text-sm px-4 py-2 rounded-full flex items-center gap-2">
               <HiSparkles size={16} className="bg-green-50 text-green-600" />
-              Ai Powered Smart Interview Platform
+              AI Powered Smart Interview Platform
             </div>
           </div>
 
@@ -54,7 +54,7 @@ const Home = () => {
               Practice Interviews With
               <span className="relative inline-block">
                 <span className="bg-green-100 text-green-600 px-5 py-1 rounded-full">
-                  Ai Intelligence
+                  AI Intelligence
                 </span>
               </span>
             </motion.h1>
@@ -80,7 +80,7 @@ const Home = () => {
                 }}
                 whileHover={{ opacity: 0.9, scale: 1.03 }}
                 whileTap={{ opacity: 1, scale: 0.98 }}
-                className="bg-black text-white px-10 py-3 rounded-full hover:opacity-90 transition shadow-md"
+                className="bg-black text-white cursor-pointer px-10 py-3 rounded-full hover:opacity-90 transition shadow-md"
               >
                 Start Interview
               </motion.button>
@@ -95,7 +95,7 @@ const Home = () => {
                 }}
                 whileHover={{ opacity: 0.9, scale: 1.03 }}
                 whileTap={{ opacity: 1, scale: 0.98 }}
-                className="border border-gray-600 px-10 py-3 rounded-full hover:bg-gray-100 transition"
+                className="border border-gray-600 px-10 py-3 cursor-pointer rounded-full hover:bg-gray-100 transition"
               >
                 View History
               </motion.button>
@@ -108,7 +108,7 @@ const Home = () => {
                 icon: <BsRobot size={24} />,
                 step: "STEP 1",
                 title: "Role & Experience Selection",
-                desc: "Dynamic follow-up question based on your answer.",
+                desc: "Dynamic follow-up questions based on your answer.",
               },
               {
                 icon: <BsMic size={24} />,
@@ -119,7 +119,7 @@ const Home = () => {
               {
                 icon: <BsClock size={24} />,
                 step: "STEP 3",
-                title: "Timer Based Simulation",
+                title: "Time Based Simulation",
                 desc: "Real interview pressure with time tracking",
               },
             ].map((item, index) => (
@@ -160,7 +160,7 @@ const Home = () => {
               transition={{ duration: 0.6 }}
               className="text-4xl font-semibold text-center mb-16"
             >
-              Advanced Ai <span className="text-green-600">Capabilities</span>
+              Advanced AI <span className="text-green-600">Capabilities</span>
             </motion.h2>
 
             <div className="grid md:grid-cols-2 gap-10">
@@ -175,13 +175,13 @@ const Home = () => {
                   image: resumeImg,
                   icon: <BsFileEarmarkText size={20} />,
                   title: "Resume Based Interview",
-                  desc: "Project-specific question based on updated resume.",
+                  desc: "Project-specific questions based on updated resume.",
                 },
                 {
                   image: pdfImg,
                   icon: <BsFileEarmarkText size={20} />,
                   title: "Downloadable PDF Report",
-                  desc: "Detailed strengths, weaknesses and improvement insights.",
+                  desc: "Download insights, weaknesses, and improvement suggestions.",
                 },
                 {
                   image: historyImg,
