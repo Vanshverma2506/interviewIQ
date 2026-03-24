@@ -8,7 +8,7 @@ import { FaUserAstronaut } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { serverUrl } from "../App";
 import { setUserData } from "../redux/userslice";
-import AuthModel from "./authModel";
+import AuthModel from "./AuthModel";
 
 const Navbar = () => {
   const { userData } = useSelector((state) => state.user);

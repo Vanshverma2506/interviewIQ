@@ -22,7 +22,7 @@ import {
 } from "react-icons/bs";
 import { HiSparkles } from "react-icons/hi";
 import { useNavigate } from "react-router-dom";
-import AuthModel from "../components/authModel.jsx";
+import AuthModel from "../components/AuthModel.jsx";
 import Footer from "../components/Footer.jsx";
 
 
