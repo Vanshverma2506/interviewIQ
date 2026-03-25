@@ -26,8 +26,9 @@ export const createOrder = async (req, res) => {
       ],
       mode: "payment",
       success_url:
-        "http://localhost:5173/pricing?success=true&session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: "http://localhost:5173/pricing?canceled=true",
+  "https://interviewiq-2-vanshu.onrender.com/pricing?success=true&session_id={CHECKOUT_SESSION_ID}",
+cancel_url:
+  "https://interviewiq-2-vanshu.onrender.com/pricing?canceled=true",
       metadata: {
         userId: req.userId,
         credits: credits,
