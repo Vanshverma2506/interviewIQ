@@ -13,11 +13,15 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-  origin: "https://interviewiq-2-vanshu.onrender.com",
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  origin: true,
+  credentials: true
 }));
+
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", "true");
+  next();
+});
 
 app.use(express.json());
 app.use(cookieParser());
